@@ -16,16 +16,16 @@ import {
 import axios from "../utils/axios";
 
 const columns = [
-  { field: "description", headerName: "Description", width: 120 },
-  { field: "amount", headerName: "Amount", width: 70, type: "number" },
+  { field: "description", headerName: "Description", width: 250 },
+  { field: "amount", headerName: "Amount", width: 100, type: "number" },
   {
     field: "category",
     headerName: "Category",
-    width: 70,
+    width: 100,
   },
-  { field: "date", headerName: "Income Date", width: 70 },
-  { field: "source", headerName: "Source", width: 70 },
-  { field: "note", headerName: "Note", width: 70 },
+  { field: "date", headerName: "Income Date", width: 100 },
+  { field: "source", headerName: "Source", width: 100 },
+  { field: "note", headerName: "Note", width: 250 },
 ];
 
 const style = {
@@ -33,14 +33,14 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
+  width: 500,
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
   p: 4,
 };
 
-const IncomeTable = ({ data, user }) => {
+const IncomeTable = ({ data, user, bankaccounts }) => {
   let rows = [];
   if (data?.length > 0)
     rows = data.map(({ _id, category, ...rest }) => ({
@@ -58,14 +58,17 @@ const IncomeTable = ({ data, user }) => {
     source: "",
     note: "",
     user: user.id,
+    bankAccountId: "",
   });
   const [categories, setCategories] = useState([]);
+  const [bankAccounts, setBankAccounts] = useState([]);
 
   const handleOpen = async () => {
     const categoreis = await axios.get("/budget/categories");
     if (categoreis.status == 200) {
       setCategories(categoreis.data);
     }
+    setBankAccounts(bankaccounts);
     setOpen(true);
   };
 
@@ -91,7 +94,7 @@ const IncomeTable = ({ data, user }) => {
   };
 
   return (
-    <div style={{ height: 400, width: "100%" }}>
+    <div style={{ height: 400 }}>
       <Button onClick={handleOpen}>Add Incomes</Button>
       <Modal
         open={open}
@@ -160,6 +163,23 @@ const IncomeTable = ({ data, user }) => {
                 margin="normal"
                 multiline
               />
+              <FormControl margin="normal">
+                <InputLabel>Bank Account</InputLabel>
+                <Select
+                  name="bankAccountId"
+                  value={income.bankAccountId}
+                  onChange={handleChange}
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  {bankAccounts.map((ac) => (
+                    <MenuItem key={ac._id} value={ac._id}>
+                      {ac.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
               <Button
                 variant="contained"
                 color="primary"
@@ -182,6 +202,7 @@ const IncomeTable = ({ data, user }) => {
           },
         }}
         pageSizeOptions={[5, 10]}
+        autosizeOnMount={true}
       />
     </div>
   );

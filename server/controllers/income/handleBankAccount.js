@@ -47,6 +47,9 @@ exports.updateBalance = async (req, res) => {
 
     const user = await BankAccount.findOne({ user: updateData["user"] });
     if (user) {
+      let currentBalance = user.balance;
+      let updateAmount = parseFloat(updateData.balance);
+      updateData.balance = (currentBalance + updateAmount).toFixed(2);
       const bankAccount = await BankAccount.findByIdAndUpdate(
         accountId,
         updateData,

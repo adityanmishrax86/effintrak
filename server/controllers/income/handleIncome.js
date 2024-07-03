@@ -1,13 +1,32 @@
+const BankAccount = require("../../models/BankAccount");
 const Income = require("../../models/Income");
 
 exports.createIncome = async (req, res) => {
   try {
     const newIncome = new Income(req.body);
     const savedIncome = await newIncome.save();
-    res.status(201).json({
-      success: true,
-      message: "Income added.",
-    });
+    const bankAccount = await BankAccount.findById(savedIncome.bankAccountId);
+    if (bankAccount) {
+      let currentBalance = bankAccount.balance;
+      let updateAmount = parseFloat(savedIncome.amount);
+      let updatedBalance = (currentBalance + updateAmount).toFixed(2);
+
+      const updatedAccountBalance = await BankAccount.findByIdAndUpdate(
+        savedIncome.bankAccountId,
+        { balance: updatedBalance },
+        { new: true }
+      );
+      if (updatedAccountBalance)
+        res.status(201).json({
+          success: true,
+          message: "Income added Successfully.",
+        });
+      else
+        res.status(204).json({
+          success: false,
+          message: "Could n't update balance in the Account",
+        });
+    }
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

@@ -3,11 +3,11 @@ import Header from "./components/Header";
 import MyDetails from "./components/MyDetails";
 
 export default function App() {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, account } = useAuth();
 
   return (
     <div className="App">
-      <Header />
+      <Header account={account} />
 
       {isLoggedIn ? <LoggedInText /> : <LoggedOutText />}
     </div>

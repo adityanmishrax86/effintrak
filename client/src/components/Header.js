@@ -30,8 +30,8 @@ const style = {
   p: 4,
 };
 
-export default function Header() {
-  const { isLoggedIn, account, logout } = useAuth();
+export default function Header({ account }) {
+  const { isLoggedIn, logout } = useAuth();
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [popover, setPopover] = useState(false);
@@ -40,7 +40,6 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const [bankAccount, setBankAccount] = useState({
     name: "",
-    user: account?.id,
   });
   const [category, setCategory] = useState({
     name: "",
@@ -96,7 +95,10 @@ export default function Header() {
     // Handle form submission, e.g., send the data to the server
     if (popUp === "BA") {
       try {
-        const addBank = await axios.post("/budget/bankBalance", bankAccount);
+        const addBank = await axios.post("/budget/bankBalance", {
+          name: bankAccount.name,
+          user: account?.id,
+        });
         if (addBank.status == 201 || addBank.status === 200) {
           handleClose();
         }

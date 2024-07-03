@@ -47,30 +47,35 @@ const style = {
 };
 
 let rows = [];
+const defaultState = {
+  description: "",
+  amount: "",
+  date: "",
+  category: "",
+  paymentMethod: "",
+  paidTo: "",
+  isRecurring: false,
+};
 
-const ExpenseTable = ({ data, user }) => {
+const ExpenseTable = ({ data, user, bankaccounts }) => {
   const [open, setOpen] = useState(false);
-  const [expense, setExpense] = useState({
-    description: "",
-    amount: "",
-    date: "",
-    category: "",
-    paymentMethod: "",
-    paidTo: "",
-    isRecurring: false,
-    user: user.id,
-  });
+  const [expense, setExpense] = useState({ ...defaultState, user: user.id });
   const [categories, setCategories] = useState([]);
+  const [bankAccounts, setBankAccounts] = useState([]);
 
   const handleOpen = async () => {
     const categoreis = await axios.get("/budget/categories");
     if (categoreis.status == 200) {
       setCategories(categoreis.data);
     }
+    setBankAccounts(bankaccounts);
     setOpen(true);
   };
 
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+    setExpense({ ...defaultState, user: user.id });
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -87,6 +92,7 @@ const ExpenseTable = ({ data, user }) => {
     if (addExpense.status == 201 || addExpense.status == 200) {
       // const add = await axios.post("/budget/expe")
       handleClose();
+      setExpense({ ...defaultState, user: user.id });
     }
 
     // Handle form submission, e.g., send the data to the server
@@ -178,6 +184,23 @@ const ExpenseTable = ({ data, user }) => {
                 onChange={handleChange}
                 margin="normal"
               />
+              <FormControl margin="normal">
+                <InputLabel>Bank Account</InputLabel>
+                <Select
+                  name="bankAccountId"
+                  value={expense.bankAccountId}
+                  onChange={handleChange}
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  {bankAccounts.map((ac) => (
+                    <MenuItem key={ac._id} value={ac._id}>
+                      {ac.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -195,6 +218,14 @@ const ExpenseTable = ({ data, user }) => {
                 style={{ marginTop: "16px" }}
               >
                 Submit
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                style={{ marginTop: "16px" }}
+                onClick={handleClose}
+              >
+                Cancel
               </Button>
             </FormGroup>
           </form>

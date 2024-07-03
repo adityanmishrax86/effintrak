@@ -1,10 +1,38 @@
+const BankAccount = require("../../models/BankAccount");
 const Credit = require("../../models/Credit");
 
 exports.createCredit = async (req, res) => {
   try {
     const newCredit = new Credit(req.body);
     const savedCredit = await newCredit.save();
-    res.status(201).json(savedCredit);
+    const bankAccount = await BankAccount.findById(savedCredit.creditor);
+    if (bankAccount) {
+      let currentBalance = bankAccount.balance;
+      let updateAmount = parseFloat(-savedCredit.amount);
+      let updatedBalance = (currentBalance + updateAmount).toFixed(2);
+
+      const updatedAccountBalance = await BankAccount.findByIdAndUpdate(
+        savedCredit.creditor,
+        { balance: updatedBalance },
+        { new: true }
+      );
+
+      if (updatedAccountBalance)
+        res.status(201).json({
+          success: true,
+          message: "Credit added Successfully.",
+        });
+      else
+        res.status(204).json({
+          success: false,
+          message: "Could n't update balance in the Account",
+        });
+    } else {
+      res.status(204).json({
+        success: false,
+        message: "Could n't find the bankaccount",
+      });
+    }
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

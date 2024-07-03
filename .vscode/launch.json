@@ -1,0 +1,23 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "debugOp",
+            "runtimeExecutable": "${workspaceFolder}/server/node_modules/nodemon/bin/nodemon.js",
+            "program": "${workspaceFolder}/server/index.js",
+            "restart": true,
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "env": {
+                "PORT": "5050",
+                "MONGO_URI": "mongodb+srv://azax1234:azax1234@cluster0.h8w1bp1.mongodb.net/",
+                "JWT_SECRET": "hello"
+            }
+        }
+    ]
+}

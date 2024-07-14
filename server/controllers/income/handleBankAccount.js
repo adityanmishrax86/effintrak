@@ -23,7 +23,7 @@ exports.getAllAccounts = async (req, res) => {
   try {
     const userId = req.params.id;
     const accounts = await BankAccount.find({ user: userId }).select(
-      "_id name"
+      "_id name balance"
     );
     res.status(200).json({
       success: true,

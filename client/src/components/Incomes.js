@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { DataGrid } from "@mui/x-data-grid";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -14,19 +13,7 @@ import {
   TextField,
 } from "@mui/material";
 import axios from "../utils/axios";
-
-const columns = [
-  { field: "description", headerName: "Description", width: 250 },
-  { field: "amount", headerName: "Amount", width: 100, type: "number" },
-  {
-    field: "category",
-    headerName: "Category",
-    width: 100,
-  },
-  { field: "date", headerName: "Income Date", width: 100 },
-  { field: "source", headerName: "Source", width: 100 },
-  { field: "note", headerName: "Note", width: 250 },
-];
+import { useAuth } from "../contexts/AuthContext";
 
 const style = {
   position: "absolute",
@@ -40,39 +27,39 @@ const style = {
   p: 4,
 };
 
-const IncomeTable = ({ data, user, bankaccounts }) => {
-  let rows = [];
-  if (data?.length > 0)
-    rows = data.map(({ _id, category, ...rest }) => ({
-      id: _id,
-      category: category.name,
-      ...rest,
-    }));
-
-  const [open, setOpen] = useState(false);
+const IncomeTable = ({ open, handleClose }) => {
+  // const [open, setOpen] = useState(false);
+  const { account } = useAuth();
   const [income, setIncome] = useState({
     description: "",
     amount: "",
-    date: new Date().toISOString().slice(0, 10), // Set default date to today
+    date: new Date().toISOString().slice(0, 10),
     category: "",
     source: "",
     note: "",
-    user: user.id,
+    user: account._id,
     bankAccountId: "",
   });
   const [categories, setCategories] = useState([]);
   const [bankAccounts, setBankAccounts] = useState([]);
 
-  const handleOpen = async () => {
-    const categoreis = await axios.get("/budget/categories");
-    if (categoreis.status == 200) {
-      setCategories(categoreis.data);
-    }
-    setBankAccounts(bankaccounts);
-    setOpen(true);
-  };
+  useEffect(() => {
+    const fetchBankAccounts = async () => {
+      try {
+        const response = await axios.get(`/user/accounts/${account._id}`);
+        setBankAccounts(response.data);
 
-  const handleClose = () => setOpen(false);
+        const categoreis = await axios.get("/budget/categories");
+        if (categoreis.status == 200) {
+          setCategories(categoreis.data);
+        }
+      } catch (error) {
+        console.error("Error fetching bank accounts:", error);
+      }
+    };
+
+    fetchBankAccounts();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -87,15 +74,13 @@ const IncomeTable = ({ data, user, bankaccounts }) => {
     console.log("Income submitted:", income);
     const addIncome = await axios.post("/budget/incomes", income);
     if (addIncome.status == 201 || addIncome.status == 200) {
-      // const add = await axios.post("/budget/expe")
       handleClose();
     }
-    // Handle form submission, e.g., send the data to the server
   };
 
   return (
     <div style={{ height: 400 }}>
-      <Button onClick={handleOpen}>Add Incomes</Button>
+      {/* <Button onClick={handleOpen}>Add Incomes</Button> */}
       <Modal
         open={open}
         onClose={handleClose}
@@ -173,11 +158,12 @@ const IncomeTable = ({ data, user, bankaccounts }) => {
                   <MenuItem value="">
                     <em>None</em>
                   </MenuItem>
-                  {bankAccounts.map((ac) => (
-                    <MenuItem key={ac._id} value={ac._id}>
-                      {ac.name}
-                    </MenuItem>
-                  ))}
+                  {bankAccounts?.accounts?.length > 0 &&
+                    bankAccounts?.accounts?.map((ac) => (
+                      <MenuItem key={ac._id} value={ac._id}>
+                        {ac.name}
+                      </MenuItem>
+                    ))}
                 </Select>
               </FormControl>
               <Button
@@ -192,18 +178,6 @@ const IncomeTable = ({ data, user, bankaccounts }) => {
           </form>
         </Box>
       </Modal>
-
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 5 },
-          },
-        }}
-        pageSizeOptions={[5, 10]}
-        autosizeOnMount={true}
-      />
     </div>
   );
 };

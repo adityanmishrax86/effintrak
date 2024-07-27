@@ -28,6 +28,7 @@ export default function ShortDetails() {
       description: item.description,
       amount: item.amount,
       category: item.category,
+      date: item.date,
       type: "income",
     }));
 
@@ -36,11 +37,16 @@ export default function ShortDetails() {
       description: item.description,
       amount: item.amount,
       category: item.category,
+      date: item.date,
       type: "expense",
     }));
 
     const combinedData = [...processedIncome, ...processedExpenses];
-    setAllData(combinedData);
+    setAllData(
+      combinedData
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 9)
+    );
   };
 
   useEffect(() => {
@@ -53,12 +59,14 @@ export default function ShortDetails() {
           },
         });
         if (xx.status === 200) {
-          setDetails(xx.data);
-          setEntireData(xx.data);
-          setTodaysData(xx.data);
-          setTodaysEntireData(xx.data);
+          let top10dt = xx.data;
+          setDetails(top10dt);
+          setEntireData(top10dt);
+          setTodaysData(top10dt);
+          setTodaysEntireData(top10dt);
         } else setDetails([]);
       } catch (error) {
+        console.log(error);
         setDetails([]);
       }
     };

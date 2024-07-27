@@ -79,7 +79,7 @@ const IncomeTable = ({ open, handleClose }) => {
   };
 
   return (
-    <div style={{ height: 400 }}>
+    <div>
       {/* <Button onClick={handleOpen}>Add Incomes</Button> */}
       <Modal
         open={open}

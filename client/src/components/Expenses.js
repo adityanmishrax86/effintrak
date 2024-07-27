@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import {
   Box,
@@ -14,25 +14,7 @@ import {
   TextField,
 } from "@mui/material";
 import axios from "../utils/axios";
-
-const columns = [
-  { field: "description", headerName: "Description", width: 120 },
-  { field: "amount", headerName: "Amount  ", width: 70, type: "number" },
-  {
-    field: "date",
-    headerName: "Date",
-    width: 70,
-  },
-  { field: "category", headerName: "Category", width: 70 },
-  { field: "paymentMethod", headerName: "Payment Method", width: 70 },
-  { field: "paidTo", headerName: "Paid To", width: 70 },
-  {
-    field: "isRecurring",
-    headerName: "Is Recurring",
-    width: 70,
-    type: "boolean",
-  },
-];
+import { useAuth } from "../contexts/AuthContext";
 
 const style = {
   position: "absolute",
@@ -46,7 +28,6 @@ const style = {
   p: 4,
 };
 
-let rows = [];
 const defaultState = {
   description: "",
   amount: "",
@@ -57,25 +38,32 @@ const defaultState = {
   isRecurring: false,
 };
 
-const ExpenseTable = ({ data, user, bankaccounts }) => {
-  const [open, setOpen] = useState(false);
-  const [expense, setExpense] = useState({ ...defaultState, user: user.id });
+const ExpenseTable = ({ open, handleClose }) => {
+  const { account } = useAuth();
+  const [expense, setExpense] = useState({
+    ...defaultState,
+    user: account._id,
+  });
   const [categories, setCategories] = useState([]);
   const [bankAccounts, setBankAccounts] = useState([]);
 
-  const handleOpen = async () => {
-    const categoreis = await axios.get("/budget/categories");
-    if (categoreis.status == 200) {
-      setCategories(categoreis.data);
-    }
-    setBankAccounts(bankaccounts);
-    setOpen(true);
-  };
+  useEffect(() => {
+    const fetchBankAccounts = async () => {
+      try {
+        const response = await axios.get(`/user/accounts/${account._id}`);
+        setBankAccounts(response.data);
 
-  const handleClose = () => {
-    setOpen(false);
-    setExpense({ ...defaultState, user: user.id });
-  };
+        const categoreis = await axios.get("/budget/categories");
+        if (categoreis.status == 200) {
+          setCategories(categoreis.data);
+        }
+      } catch (error) {
+        console.error("Error fetching bank accounts:", error);
+      }
+    };
+
+    fetchBankAccounts();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -92,22 +80,14 @@ const ExpenseTable = ({ data, user, bankaccounts }) => {
     if (addExpense.status == 201 || addExpense.status == 200) {
       // const add = await axios.post("/budget/expe")
       handleClose();
-      setExpense({ ...defaultState, user: user.id });
+      setExpense({ ...defaultState, user: account._id });
     }
 
     // Handle form submission, e.g., send the data to the server
   };
 
-  if (data?.length > 0)
-    rows = data.map(({ _id, category, ...rest }) => ({
-      id: _id,
-      category: category.name,
-      ...rest,
-    }));
-
   return (
-    <div style={{ height: 400 }}>
-      <Button onClick={handleOpen}>Add Expenses</Button>
+    <div>
       <Modal
         open={open}
         onClose={handleClose}
@@ -194,11 +174,12 @@ const ExpenseTable = ({ data, user, bankaccounts }) => {
                   <MenuItem value="">
                     <em>None</em>
                   </MenuItem>
-                  {bankAccounts.map((ac) => (
-                    <MenuItem key={ac._id} value={ac._id}>
-                      {ac.name}
-                    </MenuItem>
-                  ))}
+                  {bankAccounts?.accounts?.length > 0 &&
+                    bankAccounts?.accounts?.map((ac) => (
+                      <MenuItem key={ac._id} value={ac._id}>
+                        {ac.name}
+                      </MenuItem>
+                    ))}
                 </Select>
               </FormControl>
               <FormControlLabel
@@ -231,17 +212,6 @@ const ExpenseTable = ({ data, user, bankaccounts }) => {
           </form>
         </Box>
       </Modal>
-
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 5 },
-          },
-        }}
-        pageSizeOptions={[5, 10]}
-      />
     </div>
   );
 };

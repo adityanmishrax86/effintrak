@@ -6,16 +6,16 @@ import axios from "../utils/axios";
 export default function BankAccounts() {
   const { account } = useAuth();
   const [acs, setBankAccounts] = useState([]);
+  const fetchBankAccounts = async () => {
+    try {
+      const response = await axios.get(`/user/accounts/${account._id}`); // Replace with your actual API endpoint
+      setBankAccounts(response.data);
+    } catch (error) {
+      console.error("Error fetching bank accounts:", error);
+    }
+  };
   useEffect(() => {
     // Define the function to fetch bank accounts
-    const fetchBankAccounts = async () => {
-      try {
-        const response = await axios.get(`/user/accounts/${account._id}`); // Replace with your actual API endpoint
-        setBankAccounts(response.data);
-      } catch (error) {
-        console.error("Error fetching bank accounts:", error);
-      }
-    };
 
     // Call the fetch function
     fetchBankAccounts();
@@ -26,11 +26,7 @@ export default function BankAccounts() {
       {acs?.accounts?.length > 0 && (
         <Card variant="outlined">
           <CardContent>
-            <Typography
-              sx={{ fontSize: 14 }}
-              color="text.secondary"
-              gutterBottom
-            >
+            <Typography color="text.secondary" gutterBottom variant="h4">
               My Monies
             </Typography>
             {acs?.accounts?.map((x) => (

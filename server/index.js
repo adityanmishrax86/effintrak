@@ -5,6 +5,7 @@ const { PORT } = require("./constants");
 const authRoutes = require("./routes/auth");
 const budgetRoutes = require("./routes/budget");
 const userRoutes = require("./routes/user");
+const analyticsRoutes = require("./routes/analytics");
 
 async function bootstrap() {
   await mongo.connect();
@@ -14,6 +15,7 @@ async function bootstrap() {
   app.use("/auth", authRoutes);
   app.use("/budget", budgetRoutes);
   app.use("/user", userRoutes);
+  app.use("/analytics", analyticsRoutes);
 
   app.listen(PORT, () => {
     console.log(`✅ Server is listening on port: ${PORT}`);

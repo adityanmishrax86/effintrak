@@ -34,9 +34,8 @@ exports.getUserDetails = async (req, res) => {
       .populate({
         path: "expenses",
         select:
-          "description amount date category paymentMethod paidTo isRecurring -user",
+          "description amount date paymentMethod paidTo isRecurring -user",
         populate: [
-          { path: "category", select: "name -_id" },
           {
             path: "bankAccountId",
             select: "name -_id",
@@ -91,7 +90,7 @@ exports.getUserExpensesAndIncomes = async (req, res) => {
         .populate({
           path: "expenses",
           select:
-            "description amount date category paymentMethod paidTo isRecurring -user",
+            "description amount date categoryName paymentMethod paidTo isRecurring -user",
           populate: [
             { path: "category", select: "name -_id" },
             {

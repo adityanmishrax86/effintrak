@@ -21,12 +21,14 @@ export default function IncomeDetails({ data }) {
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>Description</TableCell>
-              <TableCell>Category</TableCell>
-              <TableCell>Date</TableCell>
-              <TableCell>Source</TableCell>
-              <TableCell>Note</TableCell>
-              <TableCell align="right">Amount</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Description</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Category</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Date</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Source</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Note</TableCell>
+              <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                Amount
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

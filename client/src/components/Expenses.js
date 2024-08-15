@@ -15,13 +15,14 @@ import {
 } from "@mui/material";
 import axios from "../utils/axios";
 import { useAuth } from "../contexts/AuthContext";
+import Notify from "./SnackBarNotification";
 
 const style = {
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
+  width: 500,
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
@@ -31,11 +32,11 @@ const style = {
 const defaultState = {
   description: "",
   amount: "",
-  date: "",
-  category: "",
+  date: new Date().toISOString().slice(0, 10),
   paymentMethod: "",
   paidTo: "",
   isRecurring: false,
+  categoryName: "",
 };
 
 const ExpenseTable = ({ open, handleClose }) => {
@@ -46,6 +47,8 @@ const ExpenseTable = ({ open, handleClose }) => {
   });
   const [categories, setCategories] = useState([]);
   const [bankAccounts, setBankAccounts] = useState([]);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [responseData, setResponseData] = useState([]);
 
   useEffect(() => {
     const fetchBankAccounts = async () => {
@@ -81,6 +84,10 @@ const ExpenseTable = ({ open, handleClose }) => {
       // const add = await axios.post("/budget/expe")
       handleClose();
       setExpense({ ...defaultState, user: account._id });
+      setResponseData({
+        message: addExpense?.message,
+      });
+      setIsSubmitted(true);
     }
 
     // Handle form submission, e.g., send the data to the server
@@ -103,6 +110,7 @@ const ExpenseTable = ({ open, handleClose }) => {
                 value={expense.description}
                 onChange={handleChange}
                 margin="normal"
+                required={true}
               />
               <TextField
                 label="Amount"
@@ -111,6 +119,7 @@ const ExpenseTable = ({ open, handleClose }) => {
                 value={expense.amount}
                 onChange={handleChange}
                 margin="normal"
+                required={true}
               />
               <TextField
                 label="Date"
@@ -122,19 +131,21 @@ const ExpenseTable = ({ open, handleClose }) => {
                 InputLabelProps={{
                   shrink: true,
                 }}
+                required={true}
               />
               <FormControl margin="normal">
                 <InputLabel>Category</InputLabel>
                 <Select
-                  name="category"
-                  value={expense.category}
+                  name="categoryName"
+                  value={expense.categoryName}
                   onChange={handleChange}
+                  required={true}
                 >
                   <MenuItem value="">
                     <em>None</em>
                   </MenuItem>
                   {categories?.map((category) => (
-                    <MenuItem key={category.id} value={category._id}>
+                    <MenuItem key={category.id} value={category.name}>
                       {category.name}
                     </MenuItem>
                   ))}
@@ -147,6 +158,7 @@ const ExpenseTable = ({ open, handleClose }) => {
                   name="paymentMethod"
                   value={expense.paymentMethod}
                   onChange={handleChange}
+                  required={true}
                 >
                   <MenuItem value="">
                     <em>None</em>
@@ -163,6 +175,7 @@ const ExpenseTable = ({ open, handleClose }) => {
                 value={expense.paidTo}
                 onChange={handleChange}
                 margin="normal"
+                required={true}
               />
               <FormControl margin="normal">
                 <InputLabel>Bank Account</InputLabel>
@@ -170,6 +183,7 @@ const ExpenseTable = ({ open, handleClose }) => {
                   name="bankAccountId"
                   value={expense.bankAccountId}
                   onChange={handleChange}
+                  required={true}
                 >
                   <MenuItem value="">
                     <em>None</em>

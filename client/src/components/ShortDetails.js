@@ -1,4 +1,4 @@
-import { Box, Button, Tab, Tabs } from "@mui/material";
+import { Box, Button, MenuItem, Select, Tab, Tabs } from "@mui/material";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
@@ -17,6 +17,21 @@ export default function ShortDetails() {
   const [todayData, setTodayData] = useState(false);
   const [todaysData, setTodaysData] = useState([]);
   const [todaysEntireData, setTodaysEntireData] = useState([]);
+  const [monthData, setMonthData] = useState("");
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
 
   const handleChange = (event, newValue) => {
     setTabValue(newValue);
@@ -36,7 +51,7 @@ export default function ShortDetails() {
       _id: item._id,
       description: item.description,
       amount: item.amount,
-      category: item.category,
+      category: item.categoryName,
       date: item.date,
       type: "expense",
     }));
@@ -75,6 +90,22 @@ export default function ShortDetails() {
     getMyDetails();
   }, []);
 
+  const getDataForSpecificMonthAndYear = async (month) => {
+    try {
+      const xx = await axios.get(`/user/ac/${account._id}`, {
+        params: {
+          m: month,
+          y: "2024",
+        },
+      });
+      if (xx.status === 200) {
+        setDetails(xx.data);
+        setEntireData(xx.data);
+        setTodayData(true);
+      } else setDetails([]);
+    } catch (error) {}
+  };
+
   const getDataAsPerPeriod = async (period) => {
     try {
       if (period === "week") {
@@ -110,6 +141,16 @@ export default function ShortDetails() {
     }
   };
 
+  const handleMonthChange = async (e) => {
+    const { name, value, type, checked } = e.target;
+    if (value === "") {
+      console.log("Select ");
+    } else {
+      setMonthData(value);
+      getDataForSpecificMonthAndYear(value);
+    }
+  };
+
   return (
     <>
       <div className="btn-grp-data">
@@ -120,6 +161,21 @@ export default function ShortDetails() {
           Show this month data
         </Button>
         <Button>Show specific month data</Button>
+        <Select
+          name="specificMonth"
+          value={monthData}
+          onChange={handleMonthChange}
+        >
+          <MenuItem value="">
+            <em>None</em>
+          </MenuItem>
+          {months.length > 0 &&
+            months.map((ac, index) => (
+              <MenuItem key={index + 1} value={index + 1}>
+                {ac}
+              </MenuItem>
+            ))}
+        </Select>
         <Button>Select Calendar date</Button>
         {todayData && (
           <Button onClick={() => getDataAsPerPeriod("today")}>

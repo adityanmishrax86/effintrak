@@ -15,20 +15,22 @@ export default function ExpenseDetails({ data }) {
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>Description</TableCell>
-              <TableCell>Category</TableCell>
-              <TableCell>Date</TableCell>
-              <TableCell>Payment Method</TableCell>
-              <TableCell>Paid To</TableCell>
-              <TableCell>Account</TableCell>
-              <TableCell align="right">Amount</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Description</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Category</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Date</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Payment Method</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Paid To</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Account</TableCell>
+              <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                Amount
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {data.map((row) => (
               <TableRow key={row._id}>
                 <TableCell>{row.description}</TableCell>
-                <TableCell>{row.category.name}</TableCell>
+                <TableCell>{row.categoryName}</TableCell>
                 <TableCell>{row.date}</TableCell>
                 <TableCell>{row.paymentMethod}</TableCell>
                 <TableCell>{row.paidTo}</TableCell>

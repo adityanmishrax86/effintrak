@@ -49,7 +49,7 @@ export default function Dashboad() {
 
   return (
     <>
-      <Grid container spacing={2}>
+      <Grid container spacing={2} style={{ marginTop: "20px" }}>
         <Grid item xs={12} md={2}>
           <BankAccounts />
           <Box

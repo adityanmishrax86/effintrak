@@ -1,6 +1,5 @@
 import { useAuth } from "./contexts/AuthContext";
 import Header from "./components/Header";
-import MyDetails from "./components/AllDetails";
 import Dashboad from "./components/Dashboard";
 
 export default function App() {
@@ -20,10 +19,6 @@ const LoggedInText = () => {
 
   return (
     <>
-      <p>
-        Hey, {account.username}! I'm happy to let you know: you are
-        authenticated!
-      </p>
       {/* <MyDetails /> */}
       <Dashboad />
     </>

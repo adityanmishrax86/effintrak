@@ -27,6 +27,7 @@ const {
   getExpenses,
   getExpenseById,
   updateExpense,
+  updateAllExpense,
 } = require("../controllers/income/handleExpense");
 const {
   createSaving,
@@ -71,6 +72,7 @@ router.post("/expense", createExpense);
 router.get("/expense", getExpenses);
 router.get("/expense/:id", getExpenseById);
 router.put("/expense/:id", updateExpense);
+router.get("/expenseUpdate", updateAllExpense);
 
 router.post("/savings", createSaving);
 router.get("/savings", getSavings);

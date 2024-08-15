@@ -1,5 +1,6 @@
 const BankAccount = require("../../models/BankAccount");
 const Expense = require("../../models/Expense");
+const Category = require("../../models/Category");
 
 exports.createExpense = async (req, res) => {
   try {
@@ -74,6 +75,32 @@ exports.updateExpense = async (req, res) => {
       return res.status(404).json({ message: "Expense not found" });
     }
     res.status(200).json(updatedExpense);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.updateAllExpense = async (req, res) => {
+  try {
+    const expensesWithoutCategoryName = await Expense.find({
+      categoryName: { $exists: false },
+    });
+
+    for (const expense of expensesWithoutCategoryName) {
+      const category = await Category.findOne({
+        _id: expense.category,
+      });
+
+      if (category) {
+        await Expense.updateOne(
+          { _id: expense._id },
+          { $set: { categoryName: category.name } }
+        );
+      }
+    }
+
+    console.log("Expenses updated successfully!");
+    return res.status(200).json({ message: "Expense Updated" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

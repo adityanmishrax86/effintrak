@@ -174,6 +174,14 @@ const IncomeTable = ({ open, handleClose }) => {
               >
                 Submit
               </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                style={{ marginTop: "16px" }}
+                onClick={handleClose}
+              >
+                Cancel
+              </Button>
             </FormGroup>
           </form>
         </Box>

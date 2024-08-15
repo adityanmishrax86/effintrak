@@ -20,6 +20,10 @@ const ExpenseSchema = new mongoose.Schema({
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
+  },
+  categoryName: {
+    type: String,
+    trim: true,
     required: true,
   },
   paymentMethod: {

@@ -39,7 +39,7 @@ export default function IncomeDetails({ data }) {
                 <TableCell>{row.date}</TableCell>
                 <TableCell>{row.source}</TableCell>
                 <TableCell>{row.note}</TableCell>
-                <TableCell align="right">{`$${row.amount}`}</TableCell>
+                <TableCell align="right">{`₹${row.amount}`}</TableCell>
               </TableRow>
             ))}
           </TableBody>

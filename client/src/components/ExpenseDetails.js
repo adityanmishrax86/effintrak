@@ -35,7 +35,7 @@ export default function ExpenseDetails({ data }) {
                 <TableCell>{row.paymentMethod}</TableCell>
                 <TableCell>{row.paidTo}</TableCell>
                 <TableCell>{row.bankAccountId?.name}</TableCell>
-                <TableCell align="right">{`$${row.amount}`}</TableCell>
+                <TableCell align="right">{`₹${row.amount}`}</TableCell>
               </TableRow>
             ))}
           </TableBody>

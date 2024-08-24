@@ -1,7 +1,10 @@
 import * as React from "react";
 import { Box, Container, Typography } from "@mui/material";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function Analytics() {
+  const { account } = useAuth();
+  let analyticsURL = `https://effintrak-analytics.streamlit.app/?embedded=true&embed_options=show_toolbar,light_theme,show_colored_line,show_padding,show_footer&user_id=${account._id}`;
   const style = {
     background: "21313C",
     border: "none",
@@ -13,10 +16,7 @@ export default function Analytics() {
   return (
     <>
       <Typography>Welcome to Analytics Dashboard</Typography>
-      <iframe
-        style={style}
-        src="https://charts.mongodb.com/charts-sikh-rahe-he-bas-uucewcb/embed/dashboards?id=4cbe678c-12a4-41be-84c1-0343032318d9&theme=dark&autoRefresh=true&maxDataAge=3600&showTitleAndDesc=true&scalingWidth=scale&scalingHeight=fixed"
-      ></iframe>
+      <iframe style={style} src={analyticsURL}></iframe>
     </>
   );
 }

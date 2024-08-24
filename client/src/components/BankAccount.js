@@ -32,7 +32,7 @@ export default function BankAccounts() {
             {acs?.accounts?.map((x) => (
               <Typography>
                 <h3>{x?.name}</h3>
-                <i>Balance: </i> $ {x?.balance}
+                <i>Balance: </i> ₹ {x?.balance}
               </Typography>
             ))}
           </CardContent>
